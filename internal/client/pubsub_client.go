@@ -45,7 +45,7 @@ func (client *psClient) CloseClient() {
 func (client *psClient) PublishMessage(ctx context.Context, msg string) error {
 	client.logger.Info("publishing to pubsub", zap.String("msg", msg))
 	result := client.topic.Publish(ctx, &pubsub.Message{
-		Data: []byte(msg),
+		Data: []byte(msg),		
 	})
 	id, err := result.Get(ctx)
 	if err != nil {

@@ -30,9 +30,9 @@ type AeroConfig struct {
 
 func GetDBConn(config AeroConfig) AeroDBService {
 	clientPolicy := aerospike.NewClientPolicy()
-	clientPolicy.ConnectionQueueSize = config.QueueSize
-	clientPolicy.LimitConnectionsToQueueSize = config.LimitConn
-	clientPolicy.Timeout = time.Duration(config.Timeout) * time.Millisecond
+	// clientPolicy.ConnectionQueueSize = config.QueueSize
+	// clientPolicy.LimitConnectionsToQueueSize = config.LimitConn
+	// clientPolicy.Timeout = time.Duration(config.Timeout) * time.Millisecond
 	client, err := aerospike.NewClientWithPolicy(clientPolicy, config.Host, config.Port)
 	if err != nil {
 		log.Fatalf("client creation failed %s", err.Error())
@@ -44,21 +44,19 @@ func GetDBConn(config AeroConfig) AeroDBService {
 }
 
 func (ad *aeroDB) InsertRecord(ctx context.Context, keyString string) error {
-	ad.logger.Info("inserting to aerodb", zap.String("keyString", keyString))
-	key, err := aerospike.NewKey("test", "userData", keyString)
+	inputKey := keyString[:36]
+	ad.logger.Info("inserting to aerodb", zap.String("inputKey", inputKey))
+	key, err := aerospike.NewKey("test", "userData", inputKey)
 	if err != nil {
 		ad.logger.Error("failed to create key", zap.String("err", err.Error()))
 		return err
 	}
-	bins := aerospike.BinMap{
-		"bin1": "data1",
-		"bin2": "data2",
-		"bin3": "data3",
-	}
+	dataBin := aerospike.NewBin("keyString",keyString)
+	timeStampBin := aerospike.NewBin("createdAt",time.Now().String())
 
 	writePolicy := aerospike.NewWritePolicy(0, 0)
 
-	err = ad.Put(writePolicy, key, bins)
+	err = ad.PutBins(writePolicy, key, dataBin,timeStampBin)
 	if err != nil {
 		ad.logger.Error("failed to insert bin", zap.String("err", err.Error()))
 		return err

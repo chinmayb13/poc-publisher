@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"log"
+	"poc-publisher/config"
 	"poc-publisher/internal/client"
 	"poc-publisher/internal/dao"
 	"poc-publisher/internal/services"
@@ -17,19 +18,24 @@ func RunServer() {
 	}
 	defer logger.Sync()
 
+	envConfig, err := config.LoadConfig("../..")
+	if err != nil {
+		logger.Fatal("error reading env file",zap.String("err",err.Error()))
+	}
+
 	ctx := context.Background()
 	aeroDB := dao.GetDBConn(dao.AeroConfig{
-		Host:      "localhost",
-		Port:      3000,
+		Host:      envConfig.DB.Host,
+		Port:      envConfig.DB.Port,
 		Logger:    logger,
-		QueueSize: 64,
-		LimitConn: true,
-		Timeout:   1000,
+		QueueSize: envConfig.DB.QueueSize,
+		LimitConn: envConfig.DB.LimitConn,
+		Timeout:   envConfig.DB.Timeout,
 	})
 
 	pubsubClient := client.GetNewClient(ctx, client.PublishConfig{
-		ProjectID: "poc-hdfc",
-		TopicID:   "poc-publisher",
+		ProjectID: envConfig.PubSub.ProjectID,
+		TopicID:   envConfig.PubSub.TopicID,
 		Logger:    logger,
 	})
 	defer pubsubClient.CloseClient()

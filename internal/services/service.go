@@ -35,33 +35,25 @@ func GetPublisherService(config *PublisherConfig) PublisherService {
 
 func (p *publisher) ReadWriteKeys(ctx context.Context) error {
 	var err error
-	keyArr := utils.GetRandomStrings(100)
-	processedIndex := make(map[int]bool)
-	for {
-		randomIndex := utils.GetRandomSequence(1, 100) - 1
-		if len(processedIndex) == 100 {
-			break
-		}
-		if processedIndex[randomIndex] {
-			continue
-		}
-		processedIndex[randomIndex] = true
-		if randomIndex < 30 {
-			err = p.dao.InsertRecord(ctx, keyArr[randomIndex])
-			if err != nil {
-				break
-			}
-			err = p.psClient.PublishMessage(ctx, keyArr[randomIndex])
-			if err != nil {
-				break
-			}
-		} else {
-			err = p.dao.GetRecord(ctx, keyArr[randomIndex])
-			if err != nil {
-				break
-			}
-		}
+	keyArr := utils.StaticStrings
 
+	randomIndex := utils.GetRandomSequence(1, 1000) - 1
+	randomIndex=100
+	if randomIndex < 300 {
+		err = p.dao.InsertRecord(ctx, keyArr[randomIndex])
+		if err != nil {
+			return err
+		}
+		err = p.psClient.PublishMessage(ctx, keyArr[randomIndex])
+		if err != nil {
+			return err
+		}
+	} else {
+		err = p.dao.GetRecord(ctx, keyArr[randomIndex])
+		if err != nil {
+			return err
+		}
 	}
+
 	return err
 }
