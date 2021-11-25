@@ -10,7 +10,7 @@ import (
 )
 
 type PublisherService interface {
-	ReadWriteKeys(ctx context.Context) error
+	ReadWriteKeys(ctx context.Context, randIndex int) error
 }
 
 type publisher struct {
@@ -33,12 +33,9 @@ func GetPublisherService(config *PublisherConfig) PublisherService {
 	}
 }
 
-func (p *publisher) ReadWriteKeys(ctx context.Context) error {
+func (p *publisher) ReadWriteKeys(ctx context.Context,randomIndex int ) error {
 	var err error
 	keyArr := utils.StaticStrings
-
-	randomIndex := utils.GetRandomSequence(1, 1000) - 1
-	randomIndex=100
 	if randomIndex < 300 {
 		err = p.dao.InsertRecord(ctx, keyArr[randomIndex])
 		if err != nil {
