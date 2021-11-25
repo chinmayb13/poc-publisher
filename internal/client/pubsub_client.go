@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockery --name=PubSubClient
 type PubSubClient interface {
 	PublishMessage(ctx context.Context, msg string) error
 	CloseClient()

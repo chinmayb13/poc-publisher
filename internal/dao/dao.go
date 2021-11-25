@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockery --name=AeroDBService
 type AeroDBService interface {
 	InsertRecord(ctx context.Context, keyString string) error
 	GetRecord(ctx context.Context, keyString string) error

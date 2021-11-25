@@ -7,6 +7,7 @@ import (
 	"poc-publisher/internal/client"
 	"poc-publisher/internal/dao"
 	"poc-publisher/internal/services"
+	"poc-publisher/internal/utils"
 
 	"go.uber.org/zap"
 )
@@ -20,7 +21,7 @@ func RunServer() {
 
 	envConfig, err := config.LoadConfig("../..")
 	if err != nil {
-		logger.Fatal("error reading env file",zap.String("err",err.Error()))
+		logger.Fatal("error reading env file", zap.String("err", err.Error()))
 	}
 
 	ctx := context.Background()
@@ -47,6 +48,6 @@ func RunServer() {
 	})
 
 	logger.Info("starting poc--publisher...")
-	publisherService.ReadWriteKeys(ctx)
+	publisherService.ReadWriteKeys(ctx, utils.GetRandomSequence(1, 1000)-1)
 
 }
