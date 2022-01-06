@@ -33,7 +33,7 @@ func GetPublisherService(config *PublisherConfig) PublisherService {
 	}
 }
 
-func (p *publisher) ReadWriteKeys(ctx context.Context,randomIndex int ) error {
+func (p *publisher) ReadWriteKeys(ctx context.Context, randomIndex int) error {
 	var err error
 	keyArr := utils.StaticStrings
 	if randomIndex < 300 {
