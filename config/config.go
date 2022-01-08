@@ -1,8 +1,21 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 //stores all conf values read by viper from config env files
+
+func setupViperConfig() {
+	viper.AddConfigPath("../../config")
+	viper.AddConfigPath("./config")
+	viper.SetConfigName("config.local")
+	//fmt.Println(os.Getwd())
+}
+
+func init() {
+	setupViperConfig()
+}
 
 type AppConfig struct {
 	DB     DBConfig
@@ -23,9 +36,9 @@ type PubSubCfg struct {
 }
 
 func LoadConfig(path string) (config AppConfig, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigName("config.local")
-	viper.SetConfigType("env")
+	//viper.AddConfigPath(path)
+	//viper.SetConfigName("config.local")
+	//viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
 	err = viper.ReadInConfig()

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.16-alpine
+FROM golang:1.16 as builder
 
 WORKDIR /app
 
@@ -10,7 +10,10 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main ./cmd/server/
-WORKDIR /dist
-RUN cp /app/main .
-CMD ["/dist/main"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server/
+RUN echo "hi docker" 
+RUN echo $(ls -lrt ./)
+FROM alpine
+RUN apk add --no-cache ca-certificates
+#COPY --from=builder /app/main /main
+CMD ["./main"]

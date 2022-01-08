@@ -4,15 +4,14 @@ go 1.16
 
 require (
 	cloud.google.com/go v0.97.0 // indirect
-	cloud.google.com/go/pubsub v1.17.0 // indirect
+	cloud.google.com/go/pubsub v1.17.0
 	github.com/aerospike/aerospike-client-go v4.5.2+incompatible
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/google/uuid v1.3.0
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.16.0 // indirect
 	github.com/spf13/viper v1.9.0
-	github.com/stretchr/testify v1.7.0 // indirect
-	github.com/vektra/mockery/v2 v2.9.4 // indirect
+	github.com/stretchr/objx v0.1.1 // indirect
+	github.com/stretchr/testify v1.7.0
 	github.com/yuin/gopher-lua v0.0.0-20210529063254-f4c35e4016d9 // indirect
 	go.uber.org/zap v1.19.1
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect

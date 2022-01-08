@@ -29,7 +29,7 @@ type psClient struct {
 func GetNewClient(ctx context.Context, config PublishConfig) PubSubClient {
 	client, err := pubsub.NewClient(ctx, config.ProjectID)
 	if err != nil {
-		log.Fatalf("client creation failed %s", err.Error())
+		log.Fatalf("pubsub client creation failed %s", err.Error())
 	}
 	topic := client.Topic(config.TopicID)
 	return &psClient{

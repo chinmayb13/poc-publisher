@@ -36,7 +36,7 @@ func GetDBConn(config AeroConfig) AeroDBService {
 	// clientPolicy.Timeout = time.Duration(config.Timeout) * time.Millisecond
 	client, err := aerospike.NewClientWithPolicy(clientPolicy, config.Host, config.Port)
 	if err != nil {
-		log.Fatalf("client creation failed %s", err.Error())
+		log.Fatalf(" aerospike client creation failed %s", err.Error())
 	}
 	return &aeroDB{
 		logger: config.Logger,
