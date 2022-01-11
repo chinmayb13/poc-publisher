@@ -39,7 +39,7 @@ func Test_ReadWriteKeys(t *testing.T) {
 			name: "Publish Failure",
 			index: 1,
 			publishErr: errors.New("publish error"),
-			errExpected: true,
+			errExpected: false,
 		},
 		{
 			name: "Get Failure",
@@ -61,7 +61,7 @@ func Test_ReadWriteKeys(t *testing.T) {
 			publisherSrv := GetPublisherService(&PublisherConfig{
 				Logger:   logger,
 				Dao:      dao,
-				PSClient: client,
+				//PSClient: client,
 			})
 			err := publisherSrv.ReadWriteKeys(ctx, tt.index)
 			assert.Equal(t, tt.errExpected, err != nil)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"poc-publisher/config"
-	"poc-publisher/internal/client"
 	"poc-publisher/internal/dao"
 	"poc-publisher/internal/services"
 	"poc-publisher/internal/utils"
@@ -32,22 +31,24 @@ func RunServer() {
 		QueueSize: envConfig.DB.QueueSize,
 		LimitConn: envConfig.DB.LimitConn,
 		Timeout:   envConfig.DB.Timeout,
+		Set:       envConfig.DB.Set,
+		NameSpace: envConfig.DB.NameSpace,
 	})
 
-	pubsubClient := client.GetNewClient(ctx, client.PublishConfig{
-		ProjectID: envConfig.PubSub.ProjectID,
-		TopicID:   envConfig.PubSub.TopicID,
-		Logger:    logger,
-	})
-	defer pubsubClient.CloseClient()
+	// pubsubClient := client.GetNewClient(ctx, client.PublishConfig{
+	// 	ProjectID: envConfig.PubSub.ProjectID,
+	// 	TopicID:   envConfig.PubSub.TopicID,
+	// 	Logger:    logger,
+	// })
+	// defer pubsubClient.CloseClient()
 
 	publisherService := services.GetPublisherService(&services.PublisherConfig{
-		Logger:   logger,
-		Dao:      aeroDB,
-		PSClient: pubsubClient,
+		Logger: logger,
+		Dao:    aeroDB,
+		//PSClient: pubsubClient,
 	})
 
-	logger.Info("starting poc--publisher...")
+	logger.Info("starting poc-publisher...")
 	publisherService.ReadWriteKeys(ctx, utils.GetRandomSequence(1, 1000)-1)
 
 }

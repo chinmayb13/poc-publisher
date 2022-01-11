@@ -17,7 +17,9 @@ type AeroDBService interface {
 
 type aeroDB struct {
 	*aerospike.Client
-	logger *zap.Logger
+	logger    *zap.Logger
+	set       string
+	nameSpace string
 }
 
 type AeroConfig struct {
@@ -27,6 +29,8 @@ type AeroConfig struct {
 	QueueSize int
 	LimitConn bool
 	Timeout   int //in milliseconds
+	Set       string
+	NameSpace string
 }
 
 func GetDBConn(config AeroConfig) AeroDBService {
@@ -39,25 +43,27 @@ func GetDBConn(config AeroConfig) AeroDBService {
 		log.Fatalf(" aerospike client creation failed %s", err.Error())
 	}
 	return &aeroDB{
-		logger: config.Logger,
-		Client: client,
+		logger:    config.Logger,
+		Client:    client,
+		set:       config.Set,
+		nameSpace: config.NameSpace,
 	}
 }
 
 func (ad *aeroDB) InsertRecord(ctx context.Context, keyString string) error {
 	inputKey := keyString[:36]
 	ad.logger.Info("inserting to aerodb", zap.String("inputKey", inputKey))
-	key, err := aerospike.NewKey("test", "userData", inputKey)
+	key, err := aerospike.NewKey(ad.nameSpace, ad.set, inputKey)
 	if err != nil {
 		ad.logger.Error("failed to create key", zap.String("err", err.Error()))
 		return err
 	}
-	dataBin := aerospike.NewBin("keyString",keyString)
-	timeStampBin := aerospike.NewBin("createdAt",time.Now().String())
+	dataBin := aerospike.NewBin("keyString", keyString)
+	timeStampBin := aerospike.NewBin("createdAt", time.Now().String())
 
 	writePolicy := aerospike.NewWritePolicy(0, 0)
 
-	err = ad.PutBins(writePolicy, key, dataBin,timeStampBin)
+	err = ad.PutBins(writePolicy, key, dataBin, timeStampBin)
 	if err != nil {
 		ad.logger.Error("failed to insert bin", zap.String("err", err.Error()))
 		return err
@@ -68,7 +74,7 @@ func (ad *aeroDB) InsertRecord(ctx context.Context, keyString string) error {
 
 func (ad *aeroDB) GetRecord(ctx context.Context, keyString string) error {
 	ad.logger.Info("fetching from aerodb", zap.String("keyString", keyString))
-	key, err := aerospike.NewKey("test", "userData", keyString)
+	key, err := aerospike.NewKey(ad.nameSpace, ad.set, keyString)
 	if err != nil {
 		ad.logger.Error("failed to create key", zap.String("err", err.Error()))
 		return err

@@ -7,10 +7,10 @@ import (
 //stores all conf values read by viper from config env files
 
 func setupViperConfig() {
-	viper.AddConfigPath("../../config")
-	viper.AddConfigPath("./config")
+	viper.AddConfigPath("../../config") //for debugging
+	viper.AddConfigPath("./config")     //for binary
+	viper.AddConfigPath("./app/config") //for docker
 	viper.SetConfigName("config.local")
-	//fmt.Println(os.Getwd())
 }
 
 func init() {
@@ -28,6 +28,8 @@ type DBConfig struct {
 	QueueSize int    `mapstructure:"DB_QUEUE_SIZE"`
 	LimitConn bool   `mapstructure:"DB_LIMIT_CONN"`
 	Timeout   int    `mapstructure:"DB_TIME_OUT"`
+	Set       string `mapstructure:"DB_SET"`
+	NameSpace string `mapstructure:"DB_NAME_SPACE"`
 }
 
 type PubSubCfg struct {

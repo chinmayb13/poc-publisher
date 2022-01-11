@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"poc-publisher/internal/client"
 	"poc-publisher/internal/dao"
 	"poc-publisher/internal/utils"
 
@@ -14,22 +13,22 @@ type PublisherService interface {
 }
 
 type publisher struct {
-	logger   *zap.Logger
-	dao      dao.AeroDBService
-	psClient client.PubSubClient
+	logger *zap.Logger
+	dao    dao.AeroDBService
+	//psClient client.PubSubClient
 }
 
 type PublisherConfig struct {
-	Logger   *zap.Logger
-	Dao      dao.AeroDBService
-	PSClient client.PubSubClient
+	Logger *zap.Logger
+	Dao    dao.AeroDBService
+	//PSClient client.PubSubClient
 }
 
 func GetPublisherService(config *PublisherConfig) PublisherService {
 	return &publisher{
-		logger:   config.Logger,
-		dao:      config.Dao,
-		psClient: config.PSClient,
+		logger: config.Logger,
+		dao:    config.Dao,
+		//psClient: config.PSClient,
 	}
 }
 
@@ -41,10 +40,10 @@ func (p *publisher) ReadWriteKeys(ctx context.Context, randomIndex int) error {
 		if err != nil {
 			return err
 		}
-		err = p.psClient.PublishMessage(ctx, keyArr[randomIndex])
-		if err != nil {
-			return err
-		}
+		// err = p.psClient.PublishMessage(ctx, keyArr[randomIndex])
+		// if err != nil {
+		// 	return err
+		// }
 	} else {
 		err = p.dao.GetRecord(ctx, keyArr[randomIndex])
 		if err != nil {

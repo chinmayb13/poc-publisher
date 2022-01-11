@@ -1,0 +1,29 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  db:
+    image: aerospike/aerospike-server-enterprise:latest
+    container_name: aerospike_db
+    environment:
+      - FEATURE_KEY_FILE=/aerospike/etc/evaluation-features.conf
+      - NAMESPACE=test
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - /home/cbarik/aerospike:/aerospike/etc
+  poc-pub:
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=aerospike_db
+    # volumes:
+    #   - .:/code
+    #   - logvolume01:/var/log
+    # links:
+    #   - redis
+# volumes:
+#   logvolume01: {}
