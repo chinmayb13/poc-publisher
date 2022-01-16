@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: poc-pub-gke
+  name: poc-pub-gke-delhi
   labels:
     client: internal
     version: 1.0.0
@@ -21,14 +21,14 @@ spec:
     spec:
       containers:
         - name: poc-pub
-          image: asia-south1-docker.pkg.dev/hbl-poc-digfac-anthos-prj/poc-pub-repo/poc-pub-image:v1
+          image: asia-south2-docker.pkg.dev/hbl-poc-digfac-anthos-prj/poc-pub-repo-delhi/poc-pub-image-delhi:v1
           ports:
-            - containerPort: 5000
+            - containerPort: 7000
           env:
             - name: DB_HOST
-              value: "35.200.238.14"
+              value: "34.131.143.71"
             - name: PORT
-              value: "5000"
+              value: "7000"
             - name: DB_SET
               value: "hdfcset3"
             - name: DB_NAME_SPACE

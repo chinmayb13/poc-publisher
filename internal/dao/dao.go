@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"log"
+	"poc-publisher/internal/literals"
 	"time"
 
 	"github.com/aerospike/aerospike-client-go"
@@ -73,8 +74,9 @@ func (ad *aeroDB) InsertRecord(ctx context.Context, keyString string) error {
 }
 
 func (ad *aeroDB) GetRecord(ctx context.Context, keyString string) error {
-	ad.logger.Info("fetching from aerodb", zap.String("keyString", keyString))
-	key, err := aerospike.NewKey(ad.nameSpace, ad.set, keyString)
+	inputKey := keyString[:36]
+	ad.logger.Info("fetching from aerodb", zap.String("inputKey", inputKey))
+	key, err := aerospike.NewKey(ad.nameSpace, ad.set, inputKey)
 	if err != nil {
 		ad.logger.Error("failed to create key", zap.String("err", err.Error()))
 		return err
@@ -82,11 +84,11 @@ func (ad *aeroDB) GetRecord(ctx context.Context, keyString string) error {
 
 	rec, err := ad.Get(aerospike.NewPolicy(), key)
 	if err != nil {
-		if err.Error() == "Key not found" {
-			ad.logger.Warn("key not found")
-			return nil
+		if err.Error() == literals.KEY_NOT_FOUND {
+			ad.logger.Warn(err.Error())
+		} else {
+			ad.logger.Error("failed to get bin", zap.String("err", err.Error()))
 		}
-		ad.logger.Error("failed to get bin", zap.String("err", err.Error()))
 		return err
 	}
 	ad.logger.Info("received bins", zap.Any("bins", rec.Bins))

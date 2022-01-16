@@ -1,25 +1,45 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"github.com/spf13/viper"
 )
 
 //stores all conf values read by viper from config env files
 
 func setupViperConfig() {
-	viper.AddConfigPath("../../config") //for debugging
-	viper.AddConfigPath("./config")     //for binary
-	viper.AddConfigPath("./app/config") //for docker
+	configPath := os.Getenv("APP_DIR") + "/config"
+	viper.AddConfigPath(configPath) //for debugging
+	//viper.AddConfigPath("./config")     //for binary
+	//viper.AddConfigPath("./app/config") //for docker
 	viper.SetConfigName("config.local")
 }
 
+func setRootIfNotExist() {
+	_, present := os.LookupEnv("APP_DIR")
+	if !present {
+		_, b, _, _ := runtime.Caller(0)
+		os.Setenv("APP_DIR", filepath.Dir(filepath.Dir(b)))
+	}
+}
+
 func init() {
+	setRootIfNotExist()
 	setupViperConfig()
 }
 
 type AppConfig struct {
-	DB     DBConfig
-	PubSub PubSubCfg
+	DB           DBConfig
+	PubSub       PubSubCfg
+	DeployConfig DeployConfig
+}
+
+type DeployConfig struct {
+	Port   string `mapstructure:"PORT"`
+	AppDir string `mapstructure:"APP_DIR"`
 }
 
 type DBConfig struct {
@@ -49,6 +69,7 @@ func LoadConfig(path string) (config AppConfig, err error) {
 	}
 	var db DBConfig
 	var pubsub PubSubCfg
+	var deploy DeployConfig
 
 	err = viper.Unmarshal(&db)
 	if err != nil {
@@ -59,7 +80,14 @@ func LoadConfig(path string) (config AppConfig, err error) {
 	if err != nil {
 		return
 	}
+
+	err = viper.Unmarshal(&deploy)
+	if err != nil {
+		return
+	}
+
 	config.DB = db
 	config.PubSub = pubsub
+	config.DeployConfig = deploy
 	return
 }

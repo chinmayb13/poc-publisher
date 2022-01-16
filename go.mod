@@ -7,6 +7,7 @@ require (
 	cloud.google.com/go/pubsub v1.17.0
 	github.com/aerospike/aerospike-client-go v4.5.2+incompatible
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/gorilla/mux v1.8.0
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.16.0 // indirect
 	github.com/spf13/viper v1.9.0

@@ -1,7 +1,9 @@
 package main
 
-import "poc-publisher/internal/server"
+import (
+	"poc-publisher/internal/server"
+)
 
-func main()  {
+func main() {
 	server.RunServer()
 }

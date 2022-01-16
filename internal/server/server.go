@@ -3,10 +3,12 @@ package server
 import (
 	"context"
 	"log"
+	"net/http"
 	"poc-publisher/config"
 	"poc-publisher/internal/dao"
+	"poc-publisher/internal/handlers"
 	"poc-publisher/internal/services"
-	"poc-publisher/internal/utils"
+	"strings"
 
 	"go.uber.org/zap"
 )
@@ -48,7 +50,12 @@ func RunServer() {
 		//PSClient: pubsubClient,
 	})
 
-	logger.Info("starting poc-publisher...")
-	publisherService.ReadWriteKeys(ctx, utils.GetRandomSequence(1, 1000)-1)
+	logger.Info("starting poc-publisher on...", zap.String("PORT", envConfig.DeployConfig.Port))
+	router := handlers.InitRouter(ctx, handlers.RouterConfig{
+		Service: publisherService,
+		Logger:  logger,
+	})
+	certPath := strings.Join([]string{envConfig.DeployConfig.AppDir, "cert"}, "/")
+	log.Fatal(http.ListenAndServeTLS(":"+envConfig.DeployConfig.Port, certPath+"/local.crt", certPath+"/local.key", router))
 
 }
